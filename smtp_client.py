@@ -37,8 +37,7 @@ def construct_message(fromaddr, toaddrs, subject):
 	except EOFError:
 	    break;
         if not line:
-	    break;
-    
+	    break;    
         msg = msg + line
 
     print "Message length is " + repr(len(msg))
@@ -51,9 +50,21 @@ def construct_mime_message(fromaddr, toaddrs, subject, files):
     msg['To'] = COMMASPACE.join(toaddrs)
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
+    email_body = ""
 
-    print files
+    print "Enter message, end with ^D (Unix) or ^Z (Windows):"
+     
+    while 1:
+        try:
+	    line = raw_input()
+	except EOFError:
+	    break;
+        if not line:
+	    break;    
+        email_body = email_body + line
 
+    msg.attach(MIMEText(email_body))
+    
     for f in files or []:
         with open(f, "rb") as n_file:
             part = MIMEApplication(
@@ -61,8 +72,9 @@ def construct_mime_message(fromaddr, toaddrs, subject, files):
 		    Name = os.path.basename(f)
 	    )
 
-    part['Content-Disposition'] = 'attachment; filename="%s"' % os.path.basename(f)
-    msg.attach(part)
+            part['Content-Disposition'] = 'attachment; filename="%s"' % os.path.basename(f)
+            msg.attach(part)
+
     return msg.as_string()
 
 def send_to_local_server():
@@ -81,7 +93,11 @@ def send_email(server_ip, attachments=None):
  
     server = connect_server(server_ip)
 
-    send_from = do_authentication(server)
+    if server_ip == "localhost":
+        send_from = prompt("From: ")
+    else:
+        send_from = do_authentication(server)
+
     send_to_s = prompt("To: ").split()
     subject = prompt("Subject: ")
     
@@ -104,9 +120,15 @@ def main():
     argparser.add_argument (
         "-o", "--option",
 	dest = "option",
+	type = int,
 	default = 1,
-	help = "option, 1: send through gmail")
+	help = "option, 1: do not need authentication 2: need authentication")
 
+    argparser.add_argument (
+        "-s", "--server_ip",
+	dest = "server_ip",
+	default = "localhost",
+	help = "server ip, default is local host")
 
     argparser.add_argument (
         "-a", "--attachments",
@@ -115,8 +137,11 @@ def main():
 	help = "attachments you want to send")
 
     args = argparser.parse_args()
+ 
 
     if args.option == 1:
+        send_email(args.server_ip,args.attachments)
+    elif args.option == 2:
         send_email("smtp.gmail.com",args.attachments)
 
 if __name__ == "__main__":

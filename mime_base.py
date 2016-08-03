@@ -20,5 +20,11 @@ class MIMEBase(object):
             msg += '\r\n%s' % self.payload
         return msg 
 
+    def __getitem__(self, key): 
+        return self.header[key]
+
+    def __setitem__(self, key, item):
+        self.header[key] = item
+
     def attach_payload(payload):
         pass

@@ -1,9 +1,9 @@
 import smtplib
 import argparse
 import os
-from email.mime.application import MIMEApplication
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+from mime_application import MIMEApplication
+from mime_multipart import MIMEMultipart
+from mime_text import MIMEText
 from email.utils import COMMASPACE, formatdate
 
 def prompt(prompt):
@@ -41,7 +41,7 @@ def construct_message(fromaddr, toaddrs, subject):
         msg = msg + line
 
     print "Message length is " + repr(len(msg))
-    return msg
+    return str(msg)
 
 def construct_mime_message(fromaddr, toaddrs, subject, files):
 
@@ -68,13 +68,13 @@ def construct_mime_message(fromaddr, toaddrs, subject, files):
         with open(f, "rb") as n_file:
             part = MIMEApplication(
 		    n_file.read(),
-		    Name = os.path.basename(f)
+		    name = os.path.basename(f)
 	    )
 
             part['Content-Disposition'] = 'attachment; filename="%s"' % os.path.basename(f)
             msg.attach(part)
 
-    return msg.as_string()
+    return msg.__str__()
 
 def send_to_local_server():
     server = smtplib.SMTP("localhost")

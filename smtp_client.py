@@ -45,13 +45,12 @@ def construct_message(fromaddr, toaddrs, subject):
 
 def construct_mime_message(fromaddr, toaddrs, subject, files):
 
-    msg = MIMEMultipart() 
+    msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['To'] = COMMASPACE.join(toaddrs)
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
     email_body = ""
-
     print "Enter message, end with ^D (Unix) or ^Z (Windows):"
      
     while 1:
@@ -107,7 +106,7 @@ def send_email(server_ip, attachments=None):
         
     else:
 
-	msg = construct_mime_message(send_from, send_to_s, subject, attachments)
+	    msg = construct_mime_message(send_from, send_to_s, subject, attachments)
 
     server.sendmail(send_from, send_to_s, msg)
     server.close()

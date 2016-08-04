@@ -10,7 +10,7 @@ def generate_boundary():
     for i in range(length):
         index = random.randint(0,(len(multipart_char) - 1))
         boundary += multipart_char[index]
-    boundary = '"NextPart==%s=="' % boundary
+    boundary = 'NextPart==%s==' % boundary
     return boundary
 
 
@@ -27,13 +27,13 @@ class MIMEMultipart(MIMEBase):
         self.boundary = None
         if boundary is None:
             self.boundary = generate_boundary()
-        self.header['Content-Type'] += '; boundary=%s' % self.boundary
+        self.header['Content-Type'] += '; boundary="%s"' % self.boundary
         self.fields = {}
         self.payload =''
 
     def attach(self, 
                mime_message):
-        self.payload += self.boundary 
+        self.payload += '--%s\r\n' % self.boundary
         self.payload += str(mime_message)
 
 

@@ -17,7 +17,7 @@ class MIMEBase(object):
         for key, value in self.header.items():
             msg += '%s: %s\r\n' % (key, self.header[key])
         if self.payload is not None:
-            msg += '\r\n%s' % self.payload
+            msg += '\r\n%s\r\n' % self.payload
         return msg 
 
     def __getitem__(self, key): 

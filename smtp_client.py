@@ -18,8 +18,6 @@ def do_authentication(server):
     print "Authenticate to gmail"
     user_name = prompt("User Name: ")
     password = prompt("Password: ")
-    #user_name = "panwipstest@gmail.com"
-    #password = "panwipssxu1"
     server.set_debuglevel(1)
     server.starttls()
     server.login(user_name,password)
